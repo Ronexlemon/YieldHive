@@ -2,7 +2,7 @@ import React from "react";
 
 const NavBar = ()=>{
     return(
-        <div className="h-10 w-full bg-gray-300 flex justify-around items-center">
+        <nav className="h-10 w-full bg-gray-300 flex justify-around items-center">
             <div>
                 YieldHive
             </div>
@@ -13,7 +13,7 @@ const NavBar = ()=>{
                 Connect
             </div>
 
-        </div>
+        </nav>
 
     )
 }

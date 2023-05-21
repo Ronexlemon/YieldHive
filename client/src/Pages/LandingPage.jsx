@@ -1,17 +1,14 @@
 import React from "react";
+import NavBar from "../components/navbar";
+import Footer from "../components/footer";
 
 const LandingPage = ()=>{
     return(
-        <div className="h-10 w-full bg-gray-300 flex justify-around items-center">
-            <div>
-                YieldHive
-            </div>
-            <div>
-                About
-            </div>
-            <div>
-                Connect
-            </div>
+        <div className="min-h-full h-screen w-full bg-black">
+           <NavBar/>
+           
+           <Footer/>
+          
 
         </div>
 
