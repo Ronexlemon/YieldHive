@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-tailwind/react";
 
-const RequestCard = () => {
+const LiquidateDashBoardCard = () => {
   const [request, setRequest] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const details = [
@@ -32,11 +32,7 @@ const RequestCard = () => {
   return (
     <div className="inset-0 flex justify-center mt-10 h-3/4">
       <div className="w-3/4 p-6 border border-gray-400 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700" id="open-btn">
-        <div className="flex justify-end items-end">
-          <button className="text-white  rounded-sm"  onClick={handleCreateRequest}>
-          <i >create Request</i>
-          </button>
-        </div>
+       
 
         <div className="text-white flex justify-evenly">
           <p>Loan</p>
@@ -58,7 +54,7 @@ const RequestCard = () => {
               <p>{element.name}</p>
               <p>{element.name}</p>
               <p>{element.age}</p>
-              <button className="border border-green-100 w-20 rounded">Lend</button>
+              <button className="border border-green-100 w-20 rounded">LIQUIDATE</button>
             </div>
           ))}
         </div>
@@ -116,4 +112,4 @@ const RequestCard = () => {
   );
 };
 
-export default RequestCard;
+export default LiquidateDashBoardCard;

@@ -47,14 +47,14 @@ const DashBoardCard = () => {
           {details.map((element, index) => (
             <div
               key={index}
-              className="border border-b-gray-400 flex justify-around mt-4 rounded h-10 items-center"
+              className="bg-gray-700 flex justify-around mt-4 rounded h-10 items-center"
             >
               <p>{element.name}</p>
               <p>{element.age}</p>
               <p>{element.name}</p>
               <p>{element.name}</p>
               <p>{element.age}</p>
-              <button className="border border-blue-100 w-16 rounded">Liquidate</button>
+              <button className="border border-green-100 w-20 rounded">REPAY</button>
             </div>
           ))}
         </div>

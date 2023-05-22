@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -8,10 +9,10 @@ const NavBar = () => {
   const handleDropdownOption = (option) => {
     // Handle the selected option here
     if(option == "Pay"){
-        navigate("/dashboard");
+        navigate("/repay");
     }
     else if(option =="Liquidate"){
-        navigate("/home");
+        navigate("/liquidate");
 
     }
     console.log(option);
@@ -25,7 +26,9 @@ const NavBar = () => {
     <nav className="h-10 w-full bg-gray-300 flex justify-around items-center">
       <button>YieldHive</button>
       <div className="flex justify-around gap-8 items-center">
+         <button onClick={()=>{navigate("/market")}} className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Market</button>
         <div className="relative inline-block text-left">
+           
           <button
             onClick={toggleDropdown}
             type="button"
@@ -61,7 +64,7 @@ const NavBar = () => {
                   role="menuitem"
                   onClick={() => handleDropdownOption("Pay")}
                 >
-                  Pay
+                  RePay
                 </button>
                 <button
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -74,7 +77,8 @@ const NavBar = () => {
             </div>
           )}
         </div>
-        <button  className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Connect</button>
+        {/* <button  className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Connect</button> */}
+        <ConnectButton label="Connect" chainStatus="icon"/>
       </div>
     </nav>
   );

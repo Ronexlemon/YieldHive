@@ -1,13 +1,13 @@
 import React from "react";
 import NavBar from "../components/navbar";
 import Footer from "../components/footer";
-import DashBoardCard from "../components/rePaydashboardCard";
+import LiquidateDashBoardCard from "../components/liquidateDashBoard";
 
-const DashBoard = ()=>{
+const Liquidate = ()=>{
     return(
         <div className="min-h-full h-screen w-full bg-black">
            <NavBar/>
-           <DashBoardCard/>
+           <LiquidateDashBoardCard/>
 
            
           
@@ -16,4 +16,4 @@ const DashBoard = ()=>{
 
     )
 }
-export default DashBoard;
+export default Liquidate;
