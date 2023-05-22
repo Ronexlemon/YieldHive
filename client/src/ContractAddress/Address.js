@@ -1,0 +1,1 @@
+export const LendingYieldContract  = "0x8269021BDaCd931eE1A453330f9Fbc2a57b9Df43"
