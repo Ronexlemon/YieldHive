@@ -1,14 +1,45 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-tailwind/react";
-import  {useContractWrite} from "wagmi"
+import  {useContractWrite,useContractRead} from "wagmi"
+import {ethers} from "ethers"
 import { LendingYieldContract } from "../ContractAddress/Address";
 import LendingAbi from "../Abis/LendingV2.json"
+import IERC20 from "../Abis/IERC20.json"
 
 const RequestCard = () => {
+  const [request, setRequest] = useState(false);
+  const [hidebutton,setHide] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [showLendingModal, setShowLendingModal] = useState(false);
+  const [duration,setDuration]= useState();
+  const [tokenAmount,setTokenAmount] = useState();
+  const [collateralAmount,setCollateralAmount] = useState();
+  const [interestAmount,setInterestAmount] = useState();
   const matic = "0x0000000000000000000000000000000000001010";
   const maticPricefeed = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
   const link = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
   const linkPriceFeed = "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408"
+  const usdc = "empty"
+  const {
+        
+    writeAsync: approveCollateral
+    
+  } = useContractWrite({
+    address:link,
+    abi:IERC20,
+    functionName: "approve",
+    args: [LendingYieldContract,collateralAmount]
+  })
+  const approve = async()=>{
+    try{
+
+      await approveCollateral();
+
+    }catch(e){
+      console.log("the approve error is",e);
+    }
+  }
+  
   const {
         
     writeAsync: add
@@ -37,6 +68,26 @@ const RequestCard = () => {
       console.log("the error is",e);
     }
   }
+  //create request
+  const {
+        
+    writeAsync: createRequest
+    
+  } = useContractWrite({
+    address:LendingYieldContract,
+    abi:LendingAbi,
+    functionName: "createRequest",
+    args: [duration,tokenAmount,collateralAmount,matic,link,interestAmount]
+  })
+  const createRequests = async()=>{
+    try{
+     
+      await createRequest();
+
+    }catch(e){
+      console.log("the error is",e);
+    }
+  }
   const allowCollatateral = async()=>{
     try{
       await addCollateral();
@@ -45,32 +96,119 @@ const RequestCard = () => {
       console.log("the error is",e);
     }
   }
-  const [request, setRequest] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const details = [
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 },
-    { name: "Ronex", age: 4 }
-  ];
+  //convert to seconds
+  const convertToSeconds = (timeValue) => {
+    const selectedTime = new Date(timeValue); // Create a Date object from the selected time
+    const currentTime = new Date(); // Create a Date object for the current time
+  
+    const differenceInSeconds = Math.floor((selectedTime - currentTime) / 1000); // Calculate the difference in seconds
+  
+    return differenceInSeconds;
+  };
+  const handleDurationChange = (event) => {
+    const timeValue = event.target.value;
+    const seconds = convertToSeconds(timeValue);
+  
+    setDuration(parseInt(seconds)); // Convert the duration to an integer and update the state
+  };  
+  
+
+  const [selectedOptionCollateral, setSelectedOptionCollateral] = useState('LINK'); // Initialize the state with an empty string
+
+  const handleOptionChangeCollateral = (event) => {
+    setSelectedOptionCollateral(event.target.value); // Update the state with the selected option value
+  };
+  const [selectedOptionToken, setSelectedOptionToken] = useState('MATIC'); // Initialize the state with an empty string
+
+  const handleOptionChangeToken = (event) => {
+    setSelectedOptionToken(event.target.value); // Update the state with the selected option value
+  };
+  const [selectedOptionInterest, setSelectedOptionInterest] = useState('MATIC'); // Initialize the state with an empty string
+
+  const handleOptionChangeInterest = (event) => {
+    setSelectedOptionInterest(event.target.value); // Update the state with the selected option value
+  };
+ 
+  console.log("amount",collateralAmount);
+  console.log("tamount",tokenAmount);
+  console.log("duration",duration);
+ 
 
   const handleCreateRequest = () => {
     setShowModal(true);
   };
+  const handleLending = () => {
+    setShowLendingModal(true);
+  };
+  const handleLendingCancel =()=>{
+    setShowLendingModal(false);
+  }
+  const handleLendApprove = ()=>{
+    setTimeout(() => {
+      setHide(false);
+    }, 5000);
 
-  const handleSendRequest = () => {
+  }
+  const handleLendSend =()=>{
+    setShowLendingModal(false);
+  }
+  const handleApproveRequest = async()=>{
+await approve();
+setTimeout(() => {
+  setHide(false);
+}, 5000);
+  }
+
+  const handleSendRequest =async () => {
     // Logic for sending the request
+    await createRequests();
+
     setShowModal(false);
   };
 
   const handleCancelRequest = () => {
     setShowModal(false);
   };
+  //contract reads
+  const {data:requests,isError} =  useContractRead({
+    address:LendingYieldContract,
+    abi: LendingAbi,
+    functionName: "getAllRequest"
+  })
+  
+  //return current time in seconds
+  const currentTimeInSeconds = ()=>{
+    const current_time_seconds = Math.floor(Date.now() / 1000);
+    return current_time_seconds;
+  }
+  //convert seconds into days
+  const convertSecondsToDays = (seconds) => {
+    const secondsInDay = 24 * 60 * 60;
+    const days = Math.floor(seconds / secondsInDay);
+    return days;
+  };
+  const convertSecondsToDHMS = (seconds) => {
+    const secondsInDay = 24 * 60 * 60;
+    const secondsInHour = 60 * 60;
+    const secondsInMinute = 60;
+  
+    const days = Math.floor(seconds / secondsInDay);
+    seconds %= secondsInDay;
+  
+    const hours = Math.floor(seconds / secondsInHour);
+    seconds %= secondsInHour;
+  
+    const minutes = Math.floor(seconds / secondsInMinute);
+    seconds %= secondsInMinute;
+  
+    return {
+      days,
+      hours,
+      minutes,
+      seconds
+    };
+  };
+  console.log("data is", requests);
 
   return (
     <div className="inset-0 flex justify-center mt-10 h-3/4">
@@ -81,27 +219,29 @@ const RequestCard = () => {
           </button>
         </div>
 
-        <div className="text-white flex justify-evenly">
+        <div className="text-white grid grid-cols-5 gap-1">
           <p>Loan</p>
           <p>Collateral</p>
           <p>Interest</p>
           <p>Term</p>
-          <p>Status</p>
+          <p className="">Status</p>
           <p></p>
+          
         </div>
 
-        <div className="text-white text-sm h-96 overflow-y-scroll">
-          {details.map((element, index) => (
+        <div className="text-white text-sm h-96 overflow-y-scroll w-full">
+          {requests.map((element, index) => (
             <div
               key={index}
-              className="bg-gray-700 flex justify-around mt-4 rounded h-10 items-center"
+              className="bg-gray-700  grid grid-cols-6 pl-10 gap-0 mt-4 rounded h-10 items-center"
             >
-              <p>{element.name}</p>
-              <p>{element.age}</p>
-              <p>{element.name}</p>
-              <p>{element.name}</p>
-              <p>{element.age}</p>
-              <button onClick={()=>{allowCollatateral()}}  className="border border-green-100 w-20 rounded">Lend</button>
+              <p ><span className="text-green-300">MATIC</span>: {Number(element.tokenAmountToBorrow)/10**18} </p>
+              <p className="pl-10"><span className="text-blue-300">LINK</span>: {Number(element.collateralAmount)/10**18}</p>
+              <p className="pl-10"><span className="text-blue-300">MATIC</span> :{Number(element.interest
+)/10**18}</p>
+              <p className="pl-10"> {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).days } days: {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).hours } hours</p>
+              <p className="pl-12">{!element.lended? <h2 className="text-green-400">Requested</h2>:<h2 className="text-red-400">Lended</h2>}</p>
+              <button onClick={handleLending}  className="border border-green-100 w-14 rounded ml-10">Lend</button>
             </div>
           ))}
         </div>
@@ -113,48 +253,76 @@ const RequestCard = () => {
         <div className="text-sm  flex flex-col gap-2 ">
           <div className="grid grid-cols-3 gap-2 items-center">
             <span>Loan</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
+            <select value={selectedOptionToken} onChange={handleOptionChangeToken}>
+        <option value="MATIC">MATIC</option>
+        <option value="USDC">USDC</option>
+      </select>
+            <input placeholder="amount" className="border border-gray-400 text-center w-28" type="text" onChange={(e)=>{setTokenAmount( ethers.parseEther(e.target.value))}}/>
           </div>
          
 
           <div className="grid grid-cols-3 gap-2 items-center">
             <span className="">Collateral</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
+            <select value={selectedOptionCollateral} onChange={handleOptionChangeCollateral}>
+        <option value="LINK">LINK</option>
+        <option value="USDC">USDC</option>
+      </select>
+            <input placeholder="Amount"  className="border border-gray-400  text-center w-28" type="text" onChange={(e)=>{setCollateralAmount(ethers.parseEther(e.target.value))}}/>
           </div>
           <div className="grid grid-cols-3 gap-2 items-center">
             <span>Interest</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
+            <select value={selectedOptionInterest} onChange={handleOptionChangeInterest}>
+        <option value="MATIC">MATIC</option>
+        <option value="USDC">USDC</option>
+      </select>
+            <input placeholder="amount" className="border border-gray-400 text-center w-28" type="text"  onChange={(e)=>{setInterestAmount(ethers.parseEther(e.target.value))}}/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <span>Time Period</span>
-            <input className="border border-gray-400 w-28" type="date" />
+            <input className="border border-gray-400 w-28" type="date" onChange={handleDurationChange} />
+
           </div>
           </div>
       
           <div className="flex justify-around mt-4">
-            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleSendRequest}>
+            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleCancelRequest}>
               Decline
             </button>
-            <button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleCancelRequest}>
+            {hidebutton?<button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleApproveRequest}>
+              Approve
+            </button> :<button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleSendRequest}>
               Confirm
-            </button>
+            </button>}
+            
+            
           </div>
         </div>
       </div>
       
       )}
+      {/* lending */}
+      {showLendingModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-10">
+        <div className="absolute bg-white w-1/2 p-6 border border-gray-400 rounded-lg shadow">
+       
+      
+          <div className="flex justify-around mt-4">
+            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleLendingCancel}>
+              Decline
+            </button>
+            {hidebutton?<button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleLendApprove}>
+              Approve
+            </button> :<button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleLendSend}>
+              Lend
+            </button>}
+            
+            
+          </div>
+        </div>
+      </div>
+      
+      )}
+
     </div>
   );
 };
