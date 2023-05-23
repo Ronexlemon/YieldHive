@@ -7,6 +7,8 @@ import LendingAbi from "../Abis/LendingV2.json"
 const RequestCard = () => {
   const matic = "0x0000000000000000000000000000000000001010";
   const maticPricefeed = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
+  const link = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
+  const linkPriceFeed = "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408"
   const {
         
     writeAsync: add
@@ -17,9 +19,27 @@ const RequestCard = () => {
     functionName: "allowToken",
     args: [matic,maticPricefeed]
   })
+  const {
+        
+    writeAsync: addCollateral
+    
+  } = useContractWrite({
+    address:LendingYieldContract,
+    abi:LendingAbi,
+    functionName: "allowCollateralToken",
+    args: [link,linkPriceFeed]
+  })
   const allowToken = async()=>{
     try{
       await add();
+
+    }catch(e){
+      console.log("the error is",e);
+    }
+  }
+  const allowCollatateral = async()=>{
+    try{
+      await addCollateral();
 
     }catch(e){
       console.log("the error is",e);
@@ -81,7 +101,7 @@ const RequestCard = () => {
               <p>{element.name}</p>
               <p>{element.name}</p>
               <p>{element.age}</p>
-              <button onClick={()=>{allowToken()}}  className="border border-green-100 w-20 rounded">Lend</button>
+              <button onClick={()=>{allowCollatateral()}}  className="border border-green-100 w-20 rounded">Lend</button>
             </div>
           ))}
         </div>
