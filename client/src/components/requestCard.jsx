@@ -1,7 +1,30 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-tailwind/react";
+import  {useContractWrite} from "wagmi"
+import { LendingYieldContract } from "../ContractAddress/Address";
+import LendingAbi from "../Abis/LendingV2.json"
 
 const RequestCard = () => {
+  const matic = "0x0000000000000000000000000000000000001010";
+  const maticPricefeed = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
+  const {
+        
+    writeAsync: add
+    
+  } = useContractWrite({
+    address:LendingYieldContract,
+    abi:LendingAbi,
+    functionName: "allowToken",
+    args: [matic,maticPricefeed]
+  })
+  const allowToken = async()=>{
+    try{
+      await add();
+
+    }catch(e){
+      console.log("the error is",e);
+    }
+  }
   const [request, setRequest] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const details = [
@@ -58,7 +81,7 @@ const RequestCard = () => {
               <p>{element.name}</p>
               <p>{element.name}</p>
               <p>{element.age}</p>
-              <button className="border border-green-100 w-20 rounded">Lend</button>
+              <button onClick={()=>{allowToken()}}  className="border border-green-100 w-20 rounded">Lend</button>
             </div>
           ))}
         </div>
