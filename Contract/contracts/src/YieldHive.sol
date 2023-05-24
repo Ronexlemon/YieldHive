@@ -120,10 +120,25 @@ contract LendingV2 is Ownable, ReentrancyGuard {
     function lend(uint _index) public payable nonReentrant {
         Information storage info = l_createRequest[_index];
         require(info.tokenAmountToBorrow == msg.value, "wrong amount");
-        // IERC20(info.tokenAddressToBorrow).transferFrom(msg.sender,info.userRequest,info.tokenAmountToBorrow);
+        // IERC20(info.tokenAddressToBorrow).transferFrom(msg.sender, info.userRequest, info.tokenAmountToBorrow);
         payable(info.userRequest).transfer(info.tokenAmountToBorrow);
-        info.lender = msg.sender;
-        info.lended = true;
+
+        // Create a new Information struct with msg.sender as the lender
+        Information memory updatedInfo = Information(
+            info.userRequest,
+            msg.sender,
+            info.timestart,
+            info.duration,
+            info.tokenAmountToBorrow,
+            info.collateralAmount,
+            info.interest,
+            info.tokenAddressToBorrow,
+            info.tokenAddressForCollateral,
+            true
+        );
+
+        l_createRequest[_index] = updatedInfo; // Replace the existing struct with the updated struct
+
         uint _requestDash = requestDash;
         l_myDashBoard[_requestDash] = DashBoard(
             info.userRequest,
@@ -197,10 +212,34 @@ contract LendingV2 is Ownable, ReentrancyGuard {
         return infos;
     }
 
-    function getAllDashBoard() public view returns (DashBoard[] memory dash) {
+    function getMyRequest(
+        address user
+    ) public view returns (Information[] memory infos) {
+        uint unlendedIndex = 0;
+        for (uint i = 0; i < requestIndex; ++i) {
+            if (l_createRequest[i].userRequest == user) {
+                unlendedIndex = unlendedIndex.add(1);
+            }
+        }
+
+        infos = new Information[](unlendedIndex);
+        uint index = 0;
+        for (uint i = 0; i < requestIndex; ++i) {
+            if (l_createRequest[i].userRequest == user) {
+                infos[index] = l_createRequest[i];
+                index = index.add(1);
+            }
+        }
+
+        return infos;
+    }
+
+    function getAllDashBoard(
+        address user
+    ) public view returns (DashBoard[] memory dash) {
         uint unlendedIndex = 0;
         for (uint i = 0; i < requestDash; ++i) {
-            if (l_myDashBoard[i].lender == msg.sender) {
+            if (l_myDashBoard[i].lender == user) {
                 unlendedIndex = unlendedIndex.add(1);
             }
         }
@@ -208,7 +247,7 @@ contract LendingV2 is Ownable, ReentrancyGuard {
         dash = new DashBoard[](unlendedIndex);
         uint index = 0;
         for (uint i = 0; i < requestDash; ++i) {
-            if (l_myDashBoard[i].lender == msg.sender) {
+            if (l_myDashBoard[i].lender == user) {
                 dash[index] = l_myDashBoard[i];
                 index = index.add(1);
             }
@@ -272,7 +311,6 @@ contract LendingV2 is Ownable, ReentrancyGuard {
         return (amount * uint256(price));
     }
 }
-
 // pragma solidity ^0.8.2;
 // import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol";
