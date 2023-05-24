@@ -260,6 +260,7 @@ setTimeout(() => {
       seconds
     };
   };
+  // 
   console.log("data is", requests);
 
   return (
@@ -282,14 +283,14 @@ setTimeout(() => {
         </div>
 
         <div className="text-white text-sm h-96 overflow-y-scroll w-full">
-          {requests.map((element, index) => (
+          {requests?.map((element, index) => (
             <div
               key={index}
               className="bg-gray-700  grid grid-cols-6 pl-10 gap-0 mt-4 rounded h-10 items-center"
             >
-              <p ><span className="text-green-300">USDC</span>: {Number(element.tokenAmountToBorrow)/10**18} </p>
+              <p ><span className="text-green-300">MATIC</span>: {Number(element.tokenAmountToBorrow)/10**18} </p>
               <p className="pl-10"><span className="text-blue-300">LINK</span>: {Number(element.collateralAmount)/10**18}</p>
-              <p className="pl-10"><span className="text-blue-300">USDC</span> :{Number(element.interest
+              <p className="pl-10"><span className="text-blue-300">MATIC</span> :{Number(element.interest
 )/10**18}</p>
               <p className="pl-10"> {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).days } days: {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).hours } hours</p>
               <p className="pl-12">{!element.lended? <h2 className="text-green-400">Requested</h2>:<h2 className="text-red-400">Lended</h2>}</p>

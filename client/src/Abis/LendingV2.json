@@ -185,7 +185,13 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
 		"name": "getAllDashBoard",
 		"outputs": [
 			{
@@ -318,6 +324,77 @@
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getMyRequest",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "userRequest",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "lender",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestart",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenAmountToBorrow",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "collateralAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "interest",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "tokenAddressToBorrow",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "tokenAddressForCollateral",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "lended",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct LendingV2.Information[]",
+				"name": "infos",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",

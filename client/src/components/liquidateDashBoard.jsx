@@ -1,9 +1,30 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-tailwind/react";
+import { LendingYieldContract } from "../ContractAddress/Address";
+import { useContractWrite,useContractRead } from "wagmi";
+import LendingAbi from "../Abis/LendingV2.json";
+import { useWalletClient } from "wagmi";
+import { useAccount } from "wagmi";
 
 const LiquidateDashBoardCard = () => {
+  
+  const { address, isConnecting, isDisconnected } = useAccount()
+  //contract reads
+  const {data:requests,isError} =  useContractRead({
+    address:LendingYieldContract,
+    abi: LendingAbi,
+    functionName: "getMyRequest",
+    args:[address]
+    
+   
+    
+
+  })
+  console.log("address",address)
+  
   const [request, setRequest] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  
   const details = [
     { name: "Ronex", age: 4 },
     { name: "Ronex", age: 4 },
@@ -28,6 +49,7 @@ const LiquidateDashBoardCard = () => {
   const handleCancelRequest = () => {
     setShowModal(false);
   };
+  console.log("the dashboard data is", requests);
 
   return (
     <div className="inset-0 flex justify-center mt-10 h-3/4">
