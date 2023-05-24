@@ -7,9 +7,12 @@ import LendingAbi from "../Abis/LendingV2.json"
 import IERC20 from "../Abis/IERC20.json"
 
 const RequestCard = () => {
+  const details = [{loan:1,collateralAmount:2,tokenAmountToBorrow:2000,duration:234566,lended:false}]
   const [request, setRequest] = useState(false);
   const [hidebutton,setHide] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [indexValue,setIndexValue] = useState();
+  const [loanamount,setLoanAmount] = useState();
   const [showLendingModal, setShowLendingModal] = useState(false);
   const [duration,setDuration]= useState();
   const [tokenAmount,setTokenAmount] = useState();
@@ -19,7 +22,51 @@ const RequestCard = () => {
   const maticPricefeed = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
   const link = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
   const linkPriceFeed = "0x1C2252aeeD50e0c9B64bDfF2735Ee3C932F5C408"
-  const usdc = "empty"
+  const usdcPriceFeed = "0x572dDec9087154dC5dfBB1546Bb62713147e0Ab0"
+  //
+  //approve matic to loan out
+  const {
+        
+    writeAsync: approveloan
+    
+  } = useContractWrite({
+    address:link,//its usdc
+    abi:IERC20,
+    functionName: "approve",
+    args: [LendingYieldContract,loanamount]
+  })
+  const approveLoan = async()=>{
+    try{
+
+      await approveloan();
+
+    }catch(e){
+      console.log("the approve error is",e);
+    }
+  }
+  //confirm loan
+  const {
+        
+    writeAsync: confirmLoan
+    
+  } = useContractWrite({
+    address:LendingYieldContract,
+    abi:LendingAbi,
+    functionName: "lend",
+    args: [indexValue],
+    value: loanamount
+  })
+  const confirmLending = async()=>{
+    try{
+
+      await confirmLoan();
+
+    }catch(e){
+      console.log("the lend error is",e);
+    }
+  }
+
+
   const {
         
     writeAsync: approveCollateral
@@ -77,7 +124,8 @@ const RequestCard = () => {
     address:LendingYieldContract,
     abi:LendingAbi,
     functionName: "createRequest",
-    args: [duration,tokenAmount,collateralAmount,matic,link,interestAmount]
+    args: [duration,tokenAmount,collateralAmount,matic,link,interestAmount],
+   
   })
   const createRequests = async()=>{
     try{
@@ -130,26 +178,30 @@ const RequestCard = () => {
   };
  
   console.log("amount",collateralAmount);
-  console.log("tamount",tokenAmount);
-  console.log("duration",duration);
+  console.log("tamount",loanamount);
+  console.log("index value",indexValue);
  
 
   const handleCreateRequest = () => {
     setShowModal(true);
   };
-  const handleLending = () => {
+  const handleLending = (_index,_amount) => {
+    setIndexValue(_index)
+    setLoanAmount(_amount);
     setShowLendingModal(true);
   };
   const handleLendingCancel =()=>{
     setShowLendingModal(false);
   }
-  const handleLendApprove = ()=>{
+  const handleLendApprove =async ()=>{
+    await approveLoan();
     setTimeout(() => {
       setHide(false);
     }, 5000);
 
   }
-  const handleLendSend =()=>{
+  const handleLendSend =async()=>{
+   await  confirmLending();
     setShowLendingModal(false);
   }
   const handleApproveRequest = async()=>{
@@ -235,13 +287,14 @@ setTimeout(() => {
               key={index}
               className="bg-gray-700  grid grid-cols-6 pl-10 gap-0 mt-4 rounded h-10 items-center"
             >
-              <p ><span className="text-green-300">MATIC</span>: {Number(element.tokenAmountToBorrow)/10**18} </p>
+              <p ><span className="text-green-300">USDC</span>: {Number(element.tokenAmountToBorrow)/10**18} </p>
               <p className="pl-10"><span className="text-blue-300">LINK</span>: {Number(element.collateralAmount)/10**18}</p>
-              <p className="pl-10"><span className="text-blue-300">MATIC</span> :{Number(element.interest
+              <p className="pl-10"><span className="text-blue-300">USDC</span> :{Number(element.interest
 )/10**18}</p>
               <p className="pl-10"> {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).days } days: {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).hours } hours</p>
               <p className="pl-12">{!element.lended? <h2 className="text-green-400">Requested</h2>:<h2 className="text-red-400">Lended</h2>}</p>
-              <button onClick={handleLending}  className="border border-green-100 w-14 rounded ml-10">Lend</button>
+              {console.log("the lended is",element.lended)}
+              <button onClick={()=>{handleLending(index,element.tokenAmountToBorrow)}}  className="border border-green-100 w-14 rounded ml-10">Lend</button>
             </div>
           ))}
         </div>
@@ -310,11 +363,9 @@ setTimeout(() => {
             <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleLendingCancel}>
               Decline
             </button>
-            {hidebutton?<button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleLendApprove}>
-              Approve
-            </button> :<button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleLendSend}>
+            <button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleLendSend}>
               Lend
-            </button>}
+            </button>
             
             
           </div>

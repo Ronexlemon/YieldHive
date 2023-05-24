@@ -1,1 +1,1 @@
-export const LendingYieldContract  = "0x8269021BDaCd931eE1A453330f9Fbc2a57b9Df43"
+export const LendingYieldContract  = "0xC1BbCB87620ABDb2e6e3c54297Ac74a5e0546799" //"0x8269021BDaCd931eE1A453330f9Fbc2a57b9Df43" 
