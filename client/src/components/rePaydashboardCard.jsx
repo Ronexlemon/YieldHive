@@ -4,6 +4,7 @@ import { LendingYieldContract } from "../ContractAddress/Address";
 import LendingAbi from "../Abis/LendingV2.json"
 import {useContractWrite,useContractRead} from "wagmi"
 import { useAccount } from "wagmi";
+import { ethers } from "ethers";
 
 const DashBoardCard = () => {
   const {address,isConnected} = useAccount()
@@ -37,7 +38,7 @@ const DashBoardCard = () => {
   })
   const confirmRepayment = async()=>{
     try{
- if(indexValue !== undefined){
+ if(indexValue !== undefined && amount !== undefined ){
   await repayBack();
 
  }
@@ -47,7 +48,7 @@ const DashBoardCard = () => {
       
 
     }catch(e){
-      console.log("the liquidate error is",e);
+      console.log("the repay error is",e);
     }
   }
   const details = [
@@ -62,14 +63,16 @@ const DashBoardCard = () => {
     { name: "Ronex", age: 4 }
   ];
 
-  const handleRepay = (_index) => {
+  const handleRepay = (_index,_amount,_interest) => {
+    const totalAmount = (_amount + _interest)/10**18;
     setIndex(_index);
-   // setAmount(_amount);
+    setAmount(ethers.parseEther(totalAmount.toString()));
     setShowModal(true);
   };
 
   const handleSendRequest = async () => {
     // Logic for sending the request
+    await confirmRepayment()
     
     setShowModal(false);
   };
@@ -104,6 +107,7 @@ const DashBoardCard = () => {
       seconds
     };
   };
+  console.log("the amount plus inters is",amount);
 
   return (
     <div className="inset-0 flex justify-center mt-10 h-3/4">
@@ -142,7 +146,7 @@ const DashBoardCard = () => {
               <p className="pl-10"> {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).days } days: {convertSecondsToDHMS( Number(element.duration   )-currentTimeInSeconds()).hours } hours</p>
               <p className="pl-12">{!element.lended? <h2 className="text-green-400">Requested</h2>:<h2 className="text-red-400">Lended</h2>}</p>
               <p>{element.age}</p>
-              <button onClick={()=>{handlerepay(index)}}  className="border border-green-100 w-20 rounded">REPAY</button>
+              <button onClick={()=>{handleRepay(index,Number(element.collateralAmount ),Number(element.interest ))}}  className="border border-green-100 w-20 rounded">REPAY</button>
             </div>
           ))}
         </div>
