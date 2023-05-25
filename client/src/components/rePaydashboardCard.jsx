@@ -1,20 +1,25 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-tailwind/react";
-import { useContractWrite,useContractRead } from "wagmi";
-import { useAccount } from "wagmi";
 import { LendingYieldContract } from "../ContractAddress/Address";
-import LendingAbi from "../Abis/LendingV2.json";
+import LendingAbi from "../Abis/LendingV2.json"
+import {useContractWrite,useContractRead} from "wagmi"
+import { useAccount } from "wagmi";
 
 const DashBoardCard = () => {
-  const {address}= useAccount();
+  const {address,isConnected} = useAccount()
   const [request, setRequest] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  //contract reads
+  const [indexValue,setIndex] = useState();
+ //contract reads
   const {data:requests,isError} =  useContractRead({
     address:LendingYieldContract,
     abi: LendingAbi,
     functionName: "getMyRequest",
     args:[address]
+    
+   
+    
+
   })
   const details = [
     { name: "Ronex", age: 4 },
@@ -28,23 +33,20 @@ const DashBoardCard = () => {
     { name: "Ronex", age: 4 }
   ];
 
-  const handleCreateRequest = () => {
+  const handleRepay = (_index) => {
+    setIndex(_index)
     setShowModal(true);
   };
 
   const handleSendRequest = async () => {
     // Logic for sending the request
+    
     setShowModal(false);
   };
 
   const handleCancelRequest = () => {
     setShowModal(false);
   };
-  const handleRepayment = (_index)=>{
-    setIndex(_index);
-    setShowModal(true);
-
-  }
 
   return (
     <div className="inset-0 flex justify-center mt-10 h-3/4">
@@ -71,7 +73,7 @@ const DashBoardCard = () => {
               <p>{element.name}</p>
               <p>{element.name}</p>
               <p>{element.age}</p>
-              <button  onClick={handleRepayment(index)} className="border border-green-100 w-20 rounded">REPAY</button>
+              <button className="border border-green-100 w-20 rounded">REPAY</button>
             </div>
           ))}
         </div>
@@ -80,38 +82,7 @@ const DashBoardCard = () => {
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-10">
         <div className="absolute bg-white w-1/2 p-6 border border-gray-400 rounded-lg shadow">
-        <div className="text-sm  flex flex-col gap-2 ">
-          <div className="grid grid-cols-3 gap-2 items-center">
-            <span>Loan</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
-          </div>
-         
-
-          <div className="grid grid-cols-3 gap-2 items-center">
-            <span className="">Collateral</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
-          </div>
-          <div className="grid grid-cols-3 gap-2 items-center">
-            <span>Interest</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <span>Time Period</span>
-            <input className="border border-gray-400 w-28" type="date" />
-          </div>
-          </div>
+       
       
           <div className="flex justify-around mt-4">
             <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleCancelRequest}>
