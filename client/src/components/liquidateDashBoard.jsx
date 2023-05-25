@@ -8,6 +8,9 @@ import { useAccount } from "wagmi";
 
 const LiquidateDashBoardCard = () => {
   const [indexValue,setIndexValue] = useState();
+  const [request, setRequest] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  
   
   const { address, isConnecting, isDisconnected } = useAccount()
   //contract reads
@@ -35,8 +38,14 @@ const LiquidateDashBoardCard = () => {
   })
   const confirmLiquidation = async()=>{
     try{
+ if(indexValue !== undefined){
+  await liquidate();
 
-      await liquidate();
+ }
+ else{
+  console.log("the index value is undefined")
+ }
+      
 
     }catch(e){
       console.log("the liquidate error is",e);
@@ -44,8 +53,6 @@ const LiquidateDashBoardCard = () => {
   }
   console.log("address",indexValue)
   
-  const [request, setRequest] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   
   const details = [
     { name: "Ronex", age: 4 },
@@ -63,12 +70,19 @@ const LiquidateDashBoardCard = () => {
     setShowModal(true);
   };
 
-  const handleSendRequest = () => {
+  const handleSendRequest = async () => {
+    await  confirmLiquidation();
     // Logic for sending the request
     setShowModal(false);
   };
 
-  const handleCancelRequest = () => {
+  const handleCancelRequest =  () => {
+   
+      
+      
+     
+    
+
     setShowModal(false);
   };
   //return current time in seconds
@@ -99,11 +113,7 @@ const LiquidateDashBoardCard = () => {
   };
   const handleLiquidate = async (_index) => {
     setIndexValue(parseInt(_index));
-    setTimeout(() => {
-      if (indexValue !== undefined) {
-        confirmLiquidation();
-      }
-    }, 3000);
+    setShowModal(true);
   };
   console.log("the dashboard data is", indexValue);
 
@@ -153,44 +163,13 @@ const LiquidateDashBoardCard = () => {
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-10">
         <div className="absolute bg-white w-1/2 p-6 border border-gray-400 rounded-lg shadow">
-        <div className="text-sm  flex flex-col gap-2 ">
-          <div className="grid grid-cols-3 gap-2 items-center">
-            <span>Loan</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
-          </div>
-         
-
-          <div className="grid grid-cols-3 gap-2 items-center">
-            <span className="">Collateral</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
-          </div>
-          <div className="grid grid-cols-3 gap-2 items-center">
-            <span>Interest</span>
-            <select>
-              <option>ADA</option>
-              <option>USDC</option>
-            </select>
-            <input className="border border-gray-400 w-28" type="text" />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <span>Time Period</span>
-            <input className="border border-gray-400 w-28" type="date" />
-          </div>
-          </div>
+       
       
           <div className="flex justify-around mt-4">
-            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleSendRequest}>
+            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleCancelRequest}>
               Decline
             </button>
-            <button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleCancelRequest}>
+            <button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleSendRequest}>
               Confirm
             </button>
           </div>
