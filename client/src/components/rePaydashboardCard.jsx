@@ -1,9 +1,21 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-tailwind/react";
+import { useContractWrite,useContractRead } from "wagmi";
+import { useAccount } from "wagmi";
+import { LendingYieldContract } from "../ContractAddress/Address";
+import LendingAbi from "../Abis/LendingV2.json";
 
 const DashBoardCard = () => {
+  const {address}= useAccount();
   const [request, setRequest] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  //contract reads
+  const {data:requests,isError} =  useContractRead({
+    address:LendingYieldContract,
+    abi: LendingAbi,
+    functionName: "getMyRequest",
+    args:[address]
+  })
   const details = [
     { name: "Ronex", age: 4 },
     { name: "Ronex", age: 4 },
@@ -20,7 +32,7 @@ const DashBoardCard = () => {
     setShowModal(true);
   };
 
-  const handleSendRequest = () => {
+  const handleSendRequest = async () => {
     // Logic for sending the request
     setShowModal(false);
   };
@@ -28,6 +40,11 @@ const DashBoardCard = () => {
   const handleCancelRequest = () => {
     setShowModal(false);
   };
+  const handleRepayment = (_index)=>{
+    setIndex(_index);
+    setShowModal(true);
+
+  }
 
   return (
     <div className="inset-0 flex justify-center mt-10 h-3/4">
@@ -54,7 +71,7 @@ const DashBoardCard = () => {
               <p>{element.name}</p>
               <p>{element.name}</p>
               <p>{element.age}</p>
-              <button className="border border-green-100 w-20 rounded">REPAY</button>
+              <button  onClick={handleRepayment(index)} className="border border-green-100 w-20 rounded">REPAY</button>
             </div>
           ))}
         </div>
@@ -97,10 +114,10 @@ const DashBoardCard = () => {
           </div>
       
           <div className="flex justify-around mt-4">
-            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleSendRequest}>
+            <button className="bg-blue-500 text-white py-2 px-4 rounded " onClick={handleCancelRequest}>
               Decline
             </button>
-            <button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleCancelRequest}>
+            <button className="bg-gray-400 text-white py-2 px-4 rounded ml-2" onClick={handleSendRequest}>
               Confirm
             </button>
           </div>
