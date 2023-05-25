@@ -5,7 +5,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'bgbank': "url('../src/assets/Defibg.png')",
+       
+      }
+    },
   },
   plugins: [],
 }

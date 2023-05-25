@@ -6,6 +6,7 @@ import './App.css'
 import LandingPage from './Pages/LandingPage'
 import DashBoard from './Pages/Dashboard'
 import Liquidate from './Pages/Liquidate'
+import HomePage from './Pages/Home'
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -51,7 +52,8 @@ function App() {
     
    <Router>
       <Routes>
-        <Route element={<LandingPage/>} path='/'/>
+      <Route element={<HomePage/>} path='/'/>
+        <Route element={<HomePage/>} path='/home'/>
         <Route element={<LandingPage/>} path='/market'/>
         <Route element={<DashBoard/>} path='/repay'/>
         <Route element={<Liquidate/>} path='/liquidate'/>

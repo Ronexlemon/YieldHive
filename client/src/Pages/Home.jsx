@@ -1,15 +1,17 @@
 import React from "react";
-import NavBar from "../components/navbar";
+
 import Footer from "../components/footer";
 import RequestCard from "../components/requestCard";
+import NavBarHome from "../components/navbarhome";
+import HomeCard from "../components/homeCard";
 
 const HomePage = ()=>{
     return(
         <div className="min-h-full h-screen w-full bg-black">
-           <NavBar/>
-           <RequestCard/>
+           <NavBarHome/>
+           <HomeCard/>
 
-           <Footer/>
+           {/* <Footer/> */}
           
 
         </div>

@@ -9,7 +9,7 @@ const LandingPage = ()=>{
            <NavBar/>
            <RequestCard/>
 
-           <Footer/>
+           {/* <Footer/> */}
           
 
         </div>
