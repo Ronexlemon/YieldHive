@@ -233,12 +233,7 @@ setTimeout(() => {
     const current_time_seconds = Math.floor(Date.now() / 1000);
     return current_time_seconds;
   }
-  //convert seconds into days
-  const convertSecondsToDays = (seconds) => {
-    const secondsInDay = 24 * 60 * 60;
-    const days = Math.floor(seconds / secondsInDay);
-    return days;
-  };
+  
   const convertSecondsToDHMS = (seconds) => {
     const secondsInDay = 24 * 60 * 60;
     const secondsInHour = 60 * 60;
