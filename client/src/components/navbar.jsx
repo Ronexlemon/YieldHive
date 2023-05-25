@@ -23,16 +23,16 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="h-10 w-full bg-gray-300 flex justify-around items-center">
-      <button>YieldHive</button>
+    <nav className="h-10 w-full bg-zinc-400 flex justify-around items-center">
+      <button className="animate-pulse text-indigo-700">YIELDHIVE</button>
       <div className="flex justify-around gap-8 items-center">
-         <button onClick={()=>{navigate("/market")}} className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Market</button>
+         <button onClick={()=>{navigate("/market")}} className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Market</button>
         <div className="relative inline-block text-left">
            
           <button
             onClick={toggleDropdown}
             type="button"
-            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             id="dashboard-dropdown"
             aria-haspopup="true"
             aria-expanded={showDropdown}

@@ -118,7 +118,7 @@ const DashBoardCard = () => {
           <p className="pl-0">Loan</p>
           <p>Collateral</p>
           <p>Interest</p>
-          <p className="text-red-500 animate-ping">Deadline</p>
+          <p className="text-red-500 animate-pulse  ">Deadline</p>
           <p>Status</p>
           <p></p>
         </div>
